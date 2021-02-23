@@ -11,18 +11,18 @@ import java.util.logging.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
- 
 /**
  *
  * @author Alfon
  */
-public class SendJson extends javax.swing.JFrame {
-
+public class SendString extends javax.swing.JFrame {
+    SocketCliente socketCliente;
     /**
      * Creates new form SendJson
      */
-    public SendJson() {
+    public SendString() {
         initComponents();
+        socketCliente= new SocketCliente();
     }
 
     /**
@@ -104,36 +104,28 @@ public class SendJson extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSendActionPerformed
-        try {
-            JSONObject obj = new JSONObject();
-            obj.put("name", this.txtName.getText());
-            obj.put("age",this.txtYears.getText());
-            ToJson(obj.toString());
-            SocketCliente sc= new SocketCliente("localhost", 7777);
-            sc.sendJson(obj);
-        } catch (JSONException ex) {
-            Logger.getLogger(SendJson.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(SendJson.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
+        this.enviarMensaje();
     }//GEN-LAST:event_btnSendActionPerformed
 
     private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
+        this.limpiar();
+    }//GEN-LAST:event_btnClearActionPerformed
+
+    public void enviarMensaje() {
+        try {
+            String values = "name" + "," + this.txtName.getText() + "," + "age" + "," + this.txtYears.getText();
+            socketCliente.conectar();
+            socketCliente.sendString(values);
+        } catch (IOException ex) {
+            Logger.getLogger(SendString.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void limpiar(){
         this.txtName.setText("");
         this.txtYears.setText("");
-    }//GEN-LAST:event_btnClearActionPerformed
-    
-    public String[] ToJson(String str){
-        String toJson=str.replace("\"", "");
-        toJson= toJson.replaceAll(":", ",");
-        String[] values= toJson.split(",");
-        for(String v: values){
-            System.out.println(v);
-        }
-        System.out.println(toJson);
-        return null;
     }
+
     /**
      * @param args the command line arguments
      */
@@ -151,20 +143,21 @@ public class SendJson extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(SendJson.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SendString.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(SendJson.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SendString.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(SendJson.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SendString.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(SendJson.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SendString.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new SendJson().setVisible(true);
+                new SendString().setVisible(true);
             }
         });
     }
