@@ -20,6 +20,7 @@ public class JReceptor extends javax.swing.JFrame {
      */
     public JReceptor() {
         initComponents();
+        this.setLocationRelativeTo(null);
         r = new Receptor();
         try {
             String texto = r.escuchar();

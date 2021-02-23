@@ -23,6 +23,7 @@ public class SendString extends javax.swing.JFrame {
     public SendString() {
         initComponents();
         socketCliente= new SocketCliente();
+        this.setLocationRelativeTo(null);
     }
 
     /**
