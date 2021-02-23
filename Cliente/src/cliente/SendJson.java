@@ -5,6 +5,7 @@
  */
 package cliente;
 
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.JSONException;
@@ -107,8 +108,12 @@ public class SendJson extends javax.swing.JFrame {
             JSONObject obj = new JSONObject();
             obj.put("name", this.txtName.getText());
             obj.put("age",this.txtYears.getText());
-            System.out.print(obj);
+            ToJson(obj.toString());
+            SocketCliente sc= new SocketCliente("localhost", 7777);
+            sc.sendJson(obj);
         } catch (JSONException ex) {
+            Logger.getLogger(SendJson.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
             Logger.getLogger(SendJson.class.getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -118,7 +123,17 @@ public class SendJson extends javax.swing.JFrame {
         this.txtName.setText("");
         this.txtYears.setText("");
     }//GEN-LAST:event_btnClearActionPerformed
-
+    
+    public String[] ToJson(String str){
+        String toJson=str.replace("\"", "");
+        toJson= toJson.replaceAll(":", ",");
+        String[] values= toJson.split(",");
+        for(String v: values){
+            System.out.println(v);
+        }
+        System.out.println(toJson);
+        return null;
+    }
     /**
      * @param args the command line arguments
      */
