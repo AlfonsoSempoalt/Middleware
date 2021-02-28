@@ -114,7 +114,7 @@ public class SendString extends javax.swing.JFrame {
 
     public void enviarMensaje() {
         try {
-            String values = "name" + "," + this.txtName.getText() + "," + "age" + "," + this.txtYears.getText();
+            String values = "name" + "-" + this.txtName.getText() + "-" + "age" + "-" + this.txtYears.getText();
             socketCliente.conectar();
             socketCliente.sendString(values);
         } catch (IOException ex) {
