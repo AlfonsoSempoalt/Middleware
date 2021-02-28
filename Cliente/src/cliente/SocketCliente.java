@@ -6,8 +6,10 @@
 package cliente;
 
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -22,20 +24,32 @@ import org.json.JSONObject;
  *
  * @author Alfon
  */
-public class SocketCliente extends Socket {
-
-    private Socket socket;
-
-    public SocketCliente() {
+public class SocketCliente extends Thread {
+ private Socket socket;
+    private InputStream in = null;
+    private OutputStream out = null;
+    private SendString respuesta;
+   
+    public SocketCliente(SendString send) {
+        this.respuesta=send;
     }
 
     public void conectar() {
         try {
             // need host and port, we want to connect to the ServerSocket at port 7777
             socket = new Socket("localhost", 7777);
-            System.out.println("Connected!");
+            in = socket.getInputStream();
+            DataInputStream dataInputStream = new DataInputStream(in);
+            String fromUser; 
+            System.out.println("Hola");
+            while(true){
+               String mensaje;
+               if((mensaje = dataInputStream.readUTF())!=null){
+                   this.respuesta.respuesta(mensaje);
+               }
+            }
         } catch (IOException ex) {
-            Logger.getLogger(SocketCliente.class.getName()).log(Level.SEVERE, null, ex);
+            
         }
 
     }
@@ -52,10 +66,19 @@ public class SocketCliente extends Socket {
         // write the message we want to send
         dataOutputStream.writeUTF(values);
         dataOutputStream.flush(); // send the message
-        dataOutputStream.close(); // close the output stream when we're done.
+        //dataOutputStream.close(); // close the output stream when we're done.
 
         System.out.println("Closing socket and terminating program.");
-        socket.close();
+        //socket.close();
+    }
+
+    @Override
+    public void run() {
+         try {
+            this.conectar();
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
     }
 
 }

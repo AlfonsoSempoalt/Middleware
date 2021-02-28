@@ -16,14 +16,17 @@ import org.json.JSONObject;
  * @author Alfon
  */
 public class SendString extends javax.swing.JFrame {
+
     SocketCliente socketCliente;
+
     /**
      * Creates new form SendJson
      */
     public SendString() {
-        initComponents();
-        socketCliente= new SocketCliente();
+        socketCliente = new SocketCliente(this);
+        socketCliente.start();
         this.setLocationRelativeTo(null);
+        initComponents();
     }
 
     /**
@@ -41,6 +44,8 @@ public class SendString extends javax.swing.JFrame {
         txtYears = new javax.swing.JTextField();
         lblName = new javax.swing.JLabel();
         lblYears = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        txtaRespuesta = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -58,30 +63,42 @@ public class SendString extends javax.swing.JFrame {
             }
         });
 
+        txtYears.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtYearsActionPerformed(evt);
+            }
+        });
+
         lblName.setText("Nombre:");
 
         lblYears.setText("Edad:");
+
+        txtaRespuesta.setColumns(20);
+        txtaRespuesta.setRows(5);
+        jScrollPane1.setViewportView(txtaRespuesta);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(84, 84, 84)
-                .addComponent(btnClear)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 128, Short.MAX_VALUE)
-                .addComponent(btnSend)
-                .addGap(64, 64, 64))
-            .addGroup(layout.createSequentialGroup()
                 .addGap(37, 37, 37)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(lblYears)
-                    .addComponent(lblName))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(txtYears, javax.swing.GroupLayout.DEFAULT_SIZE, 156, Short.MAX_VALUE)
-                    .addComponent(txtName))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblName)
+                            .addComponent(lblYears))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtName, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtYears, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jScrollPane1)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(47, 47, 47)
+                        .addComponent(btnClear)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 157, Short.MAX_VALUE)
+                        .addComponent(btnSend)))
+                .addGap(64, 64, 64))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -94,7 +111,9 @@ public class SendString extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtYears, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblYears))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 113, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 43, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnClear)
                     .addComponent(btnSend))
@@ -112,6 +131,14 @@ public class SendString extends javax.swing.JFrame {
         this.limpiar();
     }//GEN-LAST:event_btnClearActionPerformed
 
+    private void txtYearsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtYearsActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtYearsActionPerformed
+
+    public void respuesta(String mensaje) {
+        this.txtaRespuesta.setText(mensaje);
+    }
+
     public void enviarMensaje() {
         try {
             String values = "name" + "-" + this.txtName.getText() + "-" + "age" + "-" + this.txtYears.getText();
@@ -121,8 +148,8 @@ public class SendString extends javax.swing.JFrame {
             Logger.getLogger(SendString.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public void limpiar(){
+
+    public void limpiar() {
         this.txtName.setText("");
         this.txtYears.setText("");
     }
@@ -166,9 +193,11 @@ public class SendString extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnClear;
     private javax.swing.JButton btnSend;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblName;
     private javax.swing.JLabel lblYears;
     private javax.swing.JTextField txtName;
     private javax.swing.JTextField txtYears;
+    private javax.swing.JTextArea txtaRespuesta;
     // End of variables declaration//GEN-END:variables
 }

@@ -39,11 +39,14 @@ public class MiddlewareSocket {
     public void conect() {
         // don't need to specify a hostname, it will be the current machine
         try {
-            ss = new ServerSocket(7777);
+            this.ss = new ServerSocket(7777);
             System.out.println("ServerSocket awaiting connections...");
-            socket = ss.accept(); // blocking call, this will wait until a connection is attempted on this port.
-            System.out.println("Connection from " + socket + "!");
-            this.listen();
+            while (true) {
+                socket = ss.accept(); // blocking call, this will wait until a connection is attempted on this port.
+                System.out.println("Connection from " + socket + "!");
+                new HiloSocket(socket).start();
+                //this.listen();
+            }
         } catch (IOException ex) {
             Logger.getLogger(MiddlewareSocket.class.getName()).log(Level.SEVERE, null, ex);
         }
