@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package cliente;
+package receptor;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -28,16 +28,18 @@ import org.json.JSONObject;
 public class SocketCliente extends Thread {
 
     private Socket socket;
-    private DelimFramer delimFramer;
+    private LFijoFramer lfijoFramer;
     private InputStream in = null;
     private OutputStream out = null;
-    private SendDelimitado sendString;
+    private SendFijo sendString;
     private ByteArrayOutputStream messageBuffer;
-
-    public SocketCliente(SendDelimitado send) {
+    private DataInputStream dataInputStream;
+    private String mensaje;
+    
+    public SocketCliente(SendFijo send) {
         this.sendString = send;
-        this.delimFramer = new DelimFramer(in);
-        messageBuffer= new ByteArrayOutputStream();
+        this.lfijoFramer = new LFijoFramer(in);
+        messageBuffer = new ByteArrayOutputStream();
     }
 
     public void conectar() {
@@ -45,30 +47,54 @@ public class SocketCliente extends Thread {
             // need host and port, we want to connect to the ServerSocket at port 7777
             socket = new Socket("localhost", 7777);
             in = socket.getInputStream();
-            DataInputStream dataInputStream = new DataInputStream(in);
+            dataInputStream = new DataInputStream(in);
             this.out = socket.getOutputStream();
             //0 Para delimitado
             //1 Para fijo
             //2 Json
-            out.write("0".getBytes());
+            out.write("1".getBytes());
             out.flush();
+            int nextByte;
+            String str = null;
             while (true) {
-                messageBuffer.write(delimFramer.nextMsg());
-                if(messageBuffer.size()!=0){
-                    this.notificarUsuario();
+                messageBuffer = new ByteArrayOutputStream();
+                int fin = this.numero();
+                for (int j = 1; j < fin; j++) {
+                    nextByte = dataInputStream.readByte();
+                    messageBuffer.write(nextByte);
+                    str = new String(messageBuffer.toByteArray());
+                    System.out.println(str);
+                    this.mensaje=new String(str);
                 }
+                 this.notificarUsuario(mensaje);
+                 this.messageBuffer.reset();
+                
             }
         } catch (IOException ex) {
 
         }
 
     }
-    
-    public void notificarUsuario(){
-        System.out.println("Aquí null?");
-        String str = new String(messageBuffer.toByteArray());
-        str = str.substring(0, str.length()-2);
-        messageBuffer.reset();
+
+    public int numero() {
+        int nextByte;
+        String numero;
+        while (true) {
+            try {
+                nextByte = dataInputStream.readByte();
+                messageBuffer.write(nextByte);
+                numero = new String(messageBuffer.toByteArray());
+                if (numero.contains("-")) {
+                    numero = numero.substring(0, numero.length() - 1);
+                    return Integer.parseInt(numero);
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(SocketCliente.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    public void notificarUsuario(String str) {
         this.sendString.respuesta(str);
     }
 
@@ -92,7 +118,7 @@ public class SocketCliente extends Thread {
 
     public void sendValues(String values) throws IOException {
         this.out = socket.getOutputStream();
-        this.delimFramer.frameMsg(values.getBytes(), out);
+        this.lfijoFramer.frameMsg(values.getBytes(), out);
     }
 
     @Override

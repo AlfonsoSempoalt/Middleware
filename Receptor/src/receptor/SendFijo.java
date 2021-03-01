@@ -1,9 +1,7 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Arce proj
  */
-package cliente;
+package receptor;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -15,14 +13,14 @@ import org.json.JSONObject;
  *
  * @author Alfon
  */
-public class SendString extends javax.swing.JFrame {
+public class SendFijo extends javax.swing.JFrame {
 
     SocketCliente socketCliente;
 
     /**
      * Creates new form SendJson
      */
-    public SendString() {
+    public SendFijo() {
         socketCliente = new SocketCliente(this);
         socketCliente.start();
         this.setLocationRelativeTo(null);
@@ -142,10 +140,11 @@ public class SendString extends javax.swing.JFrame {
     public void enviarMensaje() {
         try {
             String values = "name" + "-" + this.txtName.getText() + "-" + "age" + "-" + this.txtYears.getText();
-            socketCliente.conectar();
-            socketCliente.sendString(values);
+            //socketCliente.sendString(values);
+            values = values.length() + "-" + values;
+            socketCliente.sendValues(values);
         } catch (IOException ex) {
-            Logger.getLogger(SendString.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SendFijo.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -171,21 +170,27 @@ public class SendString extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(SendString.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SendFijo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(SendString.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SendFijo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(SendString.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SendFijo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(SendString.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SendFijo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new SendString().setVisible(true);
+                new SendFijo().setVisible(true);
             }
         });
     }

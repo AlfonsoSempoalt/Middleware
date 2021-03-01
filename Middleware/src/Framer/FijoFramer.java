@@ -1,4 +1,4 @@
-package cliente;
+package Framer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.EOFException;
@@ -10,11 +10,11 @@ import java.io.OutputStream;
  *  Esta clase trabaja con delimitador utilizando el caracter / 
  * @author Alfon
  */
-public class DelimFramer implements Framer {
+public class FijoFramer implements Framer {
 
     private InputStream in;
     private static final byte DELIMITER = '/';
-    public DelimFramer(InputStream in) {
+    public FijoFramer(InputStream in) {
         this.in = in;
     }
     
@@ -25,13 +25,14 @@ public class DelimFramer implements Framer {
      * @throws IOException 
      */
     public void frameMsg(byte[] message, OutputStream out) throws IOException {
-        for (byte b:message) {
-            if (b == DELIMITER) {
-                throw new IOException("message ontains delimiter");
-            }
-        }
+//        for (byte b:message) {
+//            if (b == DELIMITER) {
+//                throw new IOException("message ontains delimiter");
+//            }
+//        }
+        System.out.println("Aqui framer fijo enviando");
         out.write(message);
-        out.write(DELIMITER);
+        //out.write(DELIMITER);
         out.flush();
     }
         

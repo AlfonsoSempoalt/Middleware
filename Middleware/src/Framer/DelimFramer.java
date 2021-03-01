@@ -1,4 +1,4 @@
-package cliente;
+package Framer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.EOFException;

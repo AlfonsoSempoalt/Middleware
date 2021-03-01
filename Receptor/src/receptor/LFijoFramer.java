@@ -6,10 +6,13 @@
 package receptor;
 
 import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -19,37 +22,38 @@ public class LFijoFramer implements Framer {
 
     private InputStream in;
     private static final int LONGITUD = 0;
+
     public LFijoFramer(InputStream in) {
         this.in = in;
     }
 
     public void frameMsg(byte[] message, OutputStream out) throws IOException {
-        for (byte b:message) {
+        /*for (byte b:message) {
             if (b==LONGITUD) {
                 throw new IOException("message contains Lenght");
             }
-        }
-        out.write(LONGITUD);
+        }*/
+        //out.write(LONGITUD);
         out.write(message);
         out.flush();
     }
-        
+
     @Override
     public byte[] nextMsg() throws IOException {
-       ByteArrayOutputStream messageBuffer= new ByteArrayOutputStream();
-       int nextByte;
-       
-       while((nextByte=in.read())!=LONGITUD){
-           if (nextByte==-1) {
-               if (messageBuffer.size()==0) {
-                   return null;
-               }else{
-                   throw new EOFException("non empty message without delimiter");
-               }
-           }
+        ByteArrayOutputStream messageBuffer = new ByteArrayOutputStream();
+        int nextByte;
+        DataInputStream dataInputStream = new DataInputStream(in);
+        nextByte = dataInputStream.readByte();
         messageBuffer.write(nextByte);
-       }    
-       return messageBuffer.toByteArray();
+        String str = new String(messageBuffer.toByteArray());
+        int fin = Integer.parseInt(str);
+        System.out.println(fin);
+        for (int j = 1; j < fin; j++) {
+            nextByte = dataInputStream.readByte();
+            messageBuffer.write(nextByte);
+            str = new String(messageBuffer.toByteArray());
+        }
+        return messageBuffer.toByteArray();
     }
 
 }

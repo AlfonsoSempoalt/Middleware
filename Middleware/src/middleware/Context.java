@@ -14,11 +14,16 @@ import org.json.JSONObject;
 public class Context {
 
     protected String input;
-    protected JSONObject output;
+    protected String emisor;
+    protected String receptor;
+    protected byte[] output;
 
-    public Context(String input ) {
+    public Context(String input, String emisor, String receptor) {
         this.input = input;
+        this.emisor = emisor;
+        this.receptor = receptor;
     }
+
 
     public String getInput() {
         return input;
@@ -28,19 +33,33 @@ public class Context {
         this.input = input;
     }
 
-    public JSONObject getOutput() {
+    public String getEmisor() {
+        return emisor;
+    }
+
+    public void setEmisor(String emisor) {
+        this.emisor = emisor;
+    }
+
+    public String getReceptor() {
+        return receptor;
+    }
+
+    public void setReceptor(String receptor) {
+        this.receptor = receptor;
+    }
+
+    public byte[] getOutput() {
         return output;
     }
 
-    public void setOutput(JSONObject output) {
+    public void setOutput(byte[] output) {
         this.output = output;
     }
 
     @Override
     public String toString() {
-        return "Context{" + "input=" + input + ", output=" + output + '}';
+        return "Context{" + "input=" + input + ", emisor=" + emisor + ", receptor=" + receptor + '}';
     }
-    
-    
-    
+      
 }

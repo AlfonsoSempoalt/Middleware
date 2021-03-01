@@ -5,6 +5,8 @@
  */
 package middleware;
 
+import Framer.DelimFramer;
+import Framer.FijoFramer;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -16,6 +18,7 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jdk.nashorn.internal.parser.JSONParser;
@@ -30,12 +33,23 @@ public class MiddlewareSocket {
 
     private ServerSocket ss;
     private Socket socket;
-
+    private Expression expression;
+    private DelimFramer delimFramer;
+    private FijoFramer fijoFramer;
+    private ArrayList <HiloSocket> sockets;
+    
     public static void main(String[] args) throws IOException {
         MiddlewareSocket md = new MiddlewareSocket();
+        
         md.conect();
     }
-
+    
+    public MiddlewareSocket(){
+        this.sockets= new ArrayList<>();
+        this.expression= new Expression();
+        
+    }
+            
     public void conect() {
         // don't need to specify a hostname, it will be the current machine
         try {
@@ -44,7 +58,10 @@ public class MiddlewareSocket {
             while (true) {
                 socket = ss.accept(); // blocking call, this will wait until a connection is attempted on this port.
                 System.out.println("Connection from " + socket + "!");
-                new HiloSocket(socket).start();
+                //quitar izquierda
+                HiloSocket hilo = new HiloSocket(socket, this);
+                hilo.start();
+                sockets.add(hilo);
                 //this.listen();
             }
         } catch (IOException ex) {
@@ -63,8 +80,7 @@ public class MiddlewareSocket {
             String message = dataInputStream.readUTF();
             System.out.println("The message sent from the socket was: " + message);
 
-            this.enviarJsonString(this.obtenerStringJSon(message));
-
+            //this.enviarJsonString(this.obtenerStringJSon(message));
             System.out.println("Closing sockets.");
             ss.close();
             socket.close();
@@ -73,32 +89,41 @@ public class MiddlewareSocket {
         }
 
     }
-
-    public String obtenerStringJSon(String message) {
-        Context context = new Context(message);
-        Expression exp = new Expression(context);
-        return exp.interpret().getOutput().toString();
+    
+    public void ajustarContexto(Context context){
+        System.out.println(context.toString());
+        this.expression.interpret(context);
+        //Context contextEnviar = 
+        try {
+            this.enviar(context);
+        } catch (IOException ex) {
+            Logger.getLogger(MiddlewareSocket.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
-
-    public void enviarJsonString(String json) throws IOException {
-        Socket socket = new Socket("localhost", 4444);
-        System.out.println("Connected!");
-
-        // get the output stream from the socket.
-        OutputStream outputStream = socket.getOutputStream();
-        // create a data output stream from the output stream so we can send data through it
-        DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
-
-        System.out.println("Sending string to the ServerSocket");
-
-        System.out.println(json);
-        // write the message we want to send
-        dataOutputStream.writeUTF(json);
-        dataOutputStream.flush(); // send the message
-        dataOutputStream.close(); // close the output stream when we're done.
-
-        System.out.println("Closing socket and terminating program.");
-        socket.close();
+    
+    public void enviar(Context context) throws IOException{
+        Socket soc = obtenerSocket(context.getReceptor()).getSocket();
+        InputStream inputStream= soc.getInputStream();
+        OutputStream out = soc.getOutputStream();
+        this.fijoFramer= new FijoFramer(inputStream);
+        if(context.receptor.equalsIgnoreCase("F")){
+            this.fijoFramer.frameMsg(context.getOutput(), out);
+        }
+        if(context.receptor.equalsIgnoreCase("D")){
+            this.delimFramer.frameMsg(context.getOutput(), out);
+        }
+        if(context.receptor.equalsIgnoreCase("J")){
+            
+        }
+    }
+    
+    public HiloSocket obtenerSocket(String emisor){
+        for (HiloSocket soc : sockets) {
+            if(soc.getIndentificador().equalsIgnoreCase(emisor)){
+                return soc;
+            }
+        }
+        return null;
     }
 
 }
