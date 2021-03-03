@@ -25,7 +25,7 @@ import org.json.JSONObject;
  *
  * @author Alfon
  */
-public class SocketCliente extends Thread {
+public class SocketFijo extends Thread {
 
     private Socket socket;
     private LFijoFramer lfijoFramer;
@@ -36,7 +36,7 @@ public class SocketCliente extends Thread {
     private DataInputStream dataInputStream;
     private String mensaje;
     
-    public SocketCliente(SendFijo send) {
+    public SocketFijo(SendFijo send) {
         this.sendString = send;
         this.lfijoFramer = new LFijoFramer(in);
         messageBuffer = new ByteArrayOutputStream();
@@ -89,7 +89,7 @@ public class SocketCliente extends Thread {
                     return Integer.parseInt(numero);
                 }
             } catch (IOException ex) {
-                Logger.getLogger(SocketCliente.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(SocketFijo.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }

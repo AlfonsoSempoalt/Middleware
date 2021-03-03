@@ -34,6 +34,7 @@ public class FijoFramer implements Framer {
         out.write(message);
         //out.write(DELIMITER);
         out.flush();
+        out.close();
     }
         
     @Override

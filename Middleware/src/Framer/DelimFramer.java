@@ -25,14 +25,16 @@ public class DelimFramer implements Framer {
      * @throws IOException 
      */
     public void frameMsg(byte[] message, OutputStream out) throws IOException {
-        for (byte b:message) {
-            if (b == DELIMITER) {
-                throw new IOException("message ontains delimiter");
-            }
-        }
-        out.write(message);
-        out.write(DELIMITER);
+//        for (byte b:message) {
+//            if (b == DELIMITER) {
+//                throw new IOException("message ontains delimiter");
+//            }
+//        }
+System.out.println("bandera"); 
+       out.write(message);
+//        out.write(DELIMITER);
         out.flush();
+        out.close();
     }
         
     @Override

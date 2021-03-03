@@ -36,6 +36,7 @@ public class LFijoFramer implements Framer {
         //out.write(LONGITUD);
         out.write(message);
         out.flush();
+        out.close();
     }
 
     @Override

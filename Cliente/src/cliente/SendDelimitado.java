@@ -15,15 +15,16 @@ import org.json.JSONObject;
  */
 public class SendDelimitado extends javax.swing.JFrame {
 
-    SocketCliente socketCliente;
+    SocketDelimitador socketCliente;
 
     /**
      * Creates new form SendJson
      */
     public SendDelimitado() {
-        socketCliente = new SocketCliente(this);
+        socketCliente = new SocketDelimitador(this);
         socketCliente.start();
         this.setLocationRelativeTo(null);
+        this.setTitle("Delimitador");
         initComponents();
     }
 

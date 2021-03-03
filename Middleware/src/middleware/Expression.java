@@ -51,11 +51,10 @@ public class Expression {
         //return context;
     }
 
-    private Context fijoToDelimitado(Context context) {
+    private void fijoToDelimitado(Context context) {
         String s = context.getInput();
-        String fijo = s.substring(2, s.length()) + "/";
-        context.setOutput(fijo.getBytes());
-        return context;
+        String fijo = context.input+"/";
+        context.setOutput(fijo.getBytes());        
     }
 
     private void convertFijotoJSON(Context context) {

@@ -36,20 +36,20 @@ public class MiddlewareSocket {
     private Expression expression;
     private DelimFramer delimFramer;
     private FijoFramer fijoFramer;
-    private ArrayList <HiloSocket> sockets;
-    
+    private ArrayList<HiloSocket> sockets;
+
     public static void main(String[] args) throws IOException {
         MiddlewareSocket md = new MiddlewareSocket();
-        
+
         md.conect();
     }
-    
-    public MiddlewareSocket(){
-        this.sockets= new ArrayList<>();
-        this.expression= new Expression();
-        
+
+    public MiddlewareSocket() {
+        this.sockets = new ArrayList<>();
+        this.expression = new Expression();
+
     }
-            
+
     public void conect() {
         // don't need to specify a hostname, it will be the current machine
         try {
@@ -89,8 +89,8 @@ public class MiddlewareSocket {
         }
 
     }
-    
-    public void ajustarContexto(Context context){
+
+    public void ajustarContexto(Context context) {
         System.out.println(context.toString());
         this.expression.interpret(context);
         //Context contextEnviar = 
@@ -100,30 +100,49 @@ public class MiddlewareSocket {
             Logger.getLogger(MiddlewareSocket.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public void enviar(Context context) throws IOException{
-        Socket soc = obtenerSocket(context.getReceptor()).getSocket();
-        InputStream inputStream= soc.getInputStream();
-        OutputStream out = soc.getOutputStream();
-        this.fijoFramer= new FijoFramer(inputStream);
-        if(context.receptor.equalsIgnoreCase("F")){
-            this.fijoFramer.frameMsg(context.getOutput(), out);
-        }
-        if(context.receptor.equalsIgnoreCase("D")){
-            this.delimFramer.frameMsg(context.getOutput(), out);
-        }
-        if(context.receptor.equalsIgnoreCase("J")){
-            
-        }
+
+    public void enviar(Context context) throws IOException {
+        System.out.println(sockets.size());
+        Socket soc = obtenerSocket(context.getReceptor());
+        if (soc == null) {
+            receptorNoEncontrado(context);
+        } else {
+            InputStream inputStream = soc.getInputStream();
+            OutputStream out = soc.getOutputStream();
+            System.out.println(out == null);
+            System.out.println(context.toString());
+            this.fijoFramer = new FijoFramer(inputStream);
+            this.delimFramer = new DelimFramer(inputStream);
+            if (context.receptor.equalsIgnoreCase("F")) {
+                this.fijoFramer.frameMsg(context.getOutput(), out);
+            }
+            if (context.receptor.equalsIgnoreCase("D")) {
+                this.delimFramer.frameMsg(context.getOutput(), out);
+            }
+            if (context.receptor.equalsIgnoreCase("J")) {
+
+            }
+        }       
     }
-    
-    public HiloSocket obtenerSocket(String emisor){
+
+    public Socket obtenerSocket(String emisor) {
         for (HiloSocket soc : sockets) {
-            if(soc.getIndentificador().equalsIgnoreCase(emisor)){
-                return soc;
+            if (soc.getIndentificador().equalsIgnoreCase(emisor)) {
+                return soc.getSocket();
             }
         }
         return null;
+    }
+
+    public void receptorNoEncontrado(Context context) throws IOException {
+        String mensaje = "Cliente-no-encontrado/";
+        byte[] m = mensaje.getBytes();
+        Socket soc = obtenerSocket(context.getEmisor());
+
+        InputStream is = soc.getInputStream();
+        OutputStream os = soc.getOutputStream();
+        this.delimFramer = new DelimFramer(is);
+        this.delimFramer.frameMsg(m, os);        
     }
 
 }

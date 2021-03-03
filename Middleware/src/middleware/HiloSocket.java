@@ -65,8 +65,9 @@ public class HiloSocket extends Thread {
                     messageBuffer.write(nextByte);
                     str = new String(messageBuffer.toByteArray());
                     aux = esFijo(str);
+                    System.out.println(aux);
                     if (aux != -1) {
-                        leerFijo(aux);
+                        leerFijo();                        
                     } else {
                         leerDelimitado();
                     }
@@ -81,6 +82,24 @@ public class HiloSocket extends Thread {
 
     }
 
+    public int numero() {
+        int nextByte;
+        String numero;        
+        while (true) {
+            try {
+                nextByte = dataInputStream.readByte();
+                messageBuffer.write(nextByte);
+                numero = new String(messageBuffer.toByteArray());
+                if (numero.contains("-")) {
+                    numero = numero.substring(0, numero.length() - 1);
+                    return Integer.parseInt(numero);
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(HiloSocket.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
     public void identificar(String valor) {
         if (valor.equals("0")) {
             this.identificador = "D";
@@ -105,20 +124,24 @@ public class HiloSocket extends Thread {
             }
         }
         System.out.println(str);
-        this.crearContextoFijo();
+        messageBuffer.reset();
+        this.crearContextoDelimitador();
     }
 
-    public void leerFijo(int fin) {
-        for (int j = 1; j < fin; j++) {
+    public void leerFijo() {
+        int num = numero();        
+        for (int j = 0; j < num; j++) {
             try {
                 nextByte = dataInputStream.readByte();
                 messageBuffer.write(nextByte);
-                str = new String(messageBuffer.toByteArray());
+                str = new String(messageBuffer.toByteArray());                
             } catch (IOException ex) {
                 Logger.getLogger(HiloSocket.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }
-
+        }  
+        System.out.println(str);
+        messageBuffer.reset();
+        crearContextoFijo(new String(num+"").length()+1);
     }
 
     public int esFijo(String texto) {
@@ -130,11 +153,22 @@ public class HiloSocket extends Thread {
         }
     }
 
-    public void crearContextoFijo() {
+    public void crearContextoDelimitador() {
         //asignar id al conectar
         String emisor = this.identificador;
         String receptor =str.substring(str.length()-2, str.length()-1);
         String mensaje = str.substring(0, str.length() - 3);
+        Context context = new Context(mensaje, emisor, receptor);
+        System.out.println(context.toString());
+        servidor.ajustarContexto(context);
+    }
+    
+        public void crearContextoFijo(int numFijo) {
+        //asignar id al conectar
+        
+        String emisor = this.identificador;
+        String receptor =str.substring(str.length()-1, str.length());
+        String mensaje = str.substring(numFijo, str.length() - 2);
         Context context = new Context(mensaje, emisor, receptor);
         System.out.println(context.toString());
         servidor.ajustarContexto(context);

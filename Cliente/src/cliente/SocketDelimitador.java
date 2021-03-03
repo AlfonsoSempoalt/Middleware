@@ -25,7 +25,7 @@ import org.json.JSONObject;
  *
  * @author Alfon
  */
-public class SocketCliente extends Thread {
+public class SocketDelimitador extends Thread {
 
     private Socket socket;
     private DelimFramer delimFramer;
@@ -33,11 +33,13 @@ public class SocketCliente extends Thread {
     private OutputStream out = null;
     private SendDelimitado sendString;
     private ByteArrayOutputStream messageBuffer;
+    private String mensaje;
+    private DataInputStream dataInputStream;
 
-    public SocketCliente(SendDelimitado send) {
+    public SocketDelimitador(SendDelimitado send) {
         this.sendString = send;
         this.delimFramer = new DelimFramer(in);
-        messageBuffer= new ByteArrayOutputStream();
+        messageBuffer = new ByteArrayOutputStream();
     }
 
     public void conectar() {
@@ -52,24 +54,51 @@ public class SocketCliente extends Thread {
             //2 Json
             out.write("0".getBytes());
             out.flush();
+            int nextByte;
+            String str;
             while (true) {
-                messageBuffer.write(delimFramer.nextMsg());
-                if(messageBuffer.size()!=0){
-                    this.notificarUsuario();
+                nextByte = dataInputStream.readByte();
+                messageBuffer.write(nextByte);
+                str = new String(messageBuffer.toByteArray());
+                System.out.println(str);
+                this.mensaje = new String(str);
+                if (mensaje.contains("/")) {
+                    mensaje = mensaje.substring(0, mensaje.length() - 1);
+                    this.mensaje = mensaje;
+                    notificarUsuario();     
+                    this.mensaje = null;
                 }
+                
             }
         } catch (IOException ex) {
 
         }
 
     }
-    
-    public void notificarUsuario(){
-        System.out.println("Aquí null?");
-        String str = new String(messageBuffer.toByteArray());
-        str = str.substring(0, str.length()-2);
-        messageBuffer.reset();
-        this.sendString.respuesta(str);
+
+    public void escuchar() {
+        int nextByte;
+        String msg;
+        while (true) {
+            try {
+                nextByte = dataInputStream.readByte();
+                messageBuffer.write(nextByte);
+                msg = new String(messageBuffer.toByteArray());
+                System.out.println(msg);
+                if (msg.contains("/")) {
+                    msg = msg.substring(0, msg.length() - 1);
+                    this.mensaje = msg;
+                    notificarUsuario();
+                    break;
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(SocketDelimitador.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
+    public void notificarUsuario() {
+        this.sendString.respuesta(mensaje);
     }
 
     public void sendString(String values) throws IOException {
