@@ -14,18 +14,25 @@ import org.json.JSONObject;
  * @author Alfon
  */
 public class SendDelimitado extends javax.swing.JFrame {
-
+    private static SendDelimitado frame;
     SocketDelimitador socketCliente;
 
     /**
      * Creates new form SendJson
      */
-    public SendDelimitado() {
+    private SendDelimitado() {
         socketCliente = new SocketDelimitador(this);
         socketCliente.start();
         this.setLocationRelativeTo(null);
         this.setTitle("Delimitador");
         initComponents();
+    }
+    
+    public static SendDelimitado getInstance(){
+        if (frame==null) {
+            frame= new SendDelimitado();
+        }
+        return frame;
     }
 
     /**

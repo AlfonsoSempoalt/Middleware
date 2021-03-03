@@ -14,13 +14,13 @@ import org.json.JSONObject;
  * @author Alfon
  */
 public class SendFijo extends javax.swing.JFrame {
-
+    private static SendFijo frame;
     SocketFijo socketCliente;
 
     /**
      * Creates new form SendJson
      */
-    public SendFijo() {
+    private SendFijo() {
         socketCliente = new SocketFijo(this);
         socketCliente.start();
         this.setLocationRelativeTo(null);
@@ -28,6 +28,13 @@ public class SendFijo extends javax.swing.JFrame {
         initComponents();
     }
 
+    public static SendFijo getInstance(){
+        if (frame==null) {
+            frame= new SendFijo();
+        }
+        return frame;
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -189,47 +196,7 @@ public class SendFijo extends javax.swing.JFrame {
         this.txtaRespuesta.setText("");
     }
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(SendFijo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(SendFijo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(SendFijo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(SendFijo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new SendFijo().setVisible(true);
-            }
-        });
-    }
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnClear;
