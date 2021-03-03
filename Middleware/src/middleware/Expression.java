@@ -15,69 +15,43 @@ import org.json.JSONObject;
  * @author MSI GF63
  */
 public class Expression {
-
+    
     public Expression() {
-
+        
     }
-
+    
     public void interpret(Context context) {
 //        String [] values = aString(context.getInput());
 //        this.context.setOutput(toJSON(values));
 //        return this.context;  
-        if (context.emisor.equalsIgnoreCase("F")) {
-            if (context.receptor.equalsIgnoreCase("D")) {
-                this.fijoToDelimitado(context);
-            } else {
-
-            }
-        } else if (context.emisor.equalsIgnoreCase("D")) {
-            if (context.receptor.equalsIgnoreCase("F")) {
-                this.delimitadoToFijo(context);
-            } else {
-
-            }
+        if (context.receptor.equalsIgnoreCase("D")) {
+            this.toDelimitador(context);
+        } else if (context.receptor.equalsIgnoreCase("F")) {
+            this.toFijo(context);
+        } else if (context.receptor.equalsIgnoreCase("J")) {
+            this.toJSON(context);
         }
-        if (context.emisor.equalsIgnoreCase("J")) {
-
-        }
-        //return ull;
     }
-
-    private void delimitadoToFijo(Context context) {
+    
+    private void toFijo(Context context) {
         String s = context.getInput().toString();
-        s = s.length()+1 + "-" + s;
-        System.out.println(s);
+        s = s.length() + 1 + "-" + s;
         context.setOutput(s.getBytes());
         //return context;
     }
-
-    private void fijoToDelimitado(Context context) {
+    
+    private void toDelimitador(Context context) {
         String s = context.getInput();
-        String fijo = context.input+"/";
-        context.setOutput(fijo.getBytes());        
+        String fijo = context.input + "/";
+        context.setOutput(fijo.getBytes());
     }
 
-    private void convertFijotoJSON(Context context) {
-
-    }
-
-    public Context JSONtoFijo(Context context) {
+    /*
+    * name-daniel-age-20
+     */
+    public void toJSON(Context context) {
         String s = context.getInput();
-        String json = s.substring(1, s.length() - 1);
-        json = json.replaceAll(":", "-");
-        json = json.replace("\"", "");
-        json = json.length() + "-" + json;
-        context.setOutput(json.getBytes());
-        return context;
-    }
-
-    public String[] aString(String str) {
-        String[] values = str.split(",");
-        System.out.println(values);
-        return values;
-    }
-
-    public JSONObject toJSON(String[] values) {
+        String[] values = s.split("-", 0);
         int i = 0;
         int fin = values.length;
         JSONObject obj = new JSONObject();
@@ -86,10 +60,10 @@ public class Expression {
                 obj.put(values[i], values[i + 1]);
                 i += 2;
             } catch (JSONException ex) {
-                return null;
+                System.out.println("Error al convertir a Json");
             }
         }
-        return obj;
+        context.setOutput(obj.toString().getBytes());
     }
-
+    
 }

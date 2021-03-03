@@ -1,30 +1,29 @@
 /*
  * Arce proj
  */
-package receptor;
+package json;
 
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 /**
  *
  * @author Alfon
  */
-public class SendFijo extends javax.swing.JFrame {
+public class SendJSON extends javax.swing.JFrame {
 
-    SocketFijo socketCliente;
+    SocketJson socketCliente;
 
     /**
      * Creates new form SendJson
      */
-    public SendFijo() {
-        socketCliente = new SocketFijo(this);
+    public SendJSON() {
+        socketCliente = new SocketJson(this);
         socketCliente.start();
         this.setLocationRelativeTo(null);
-        this.setTitle("Fijo");
+        this.setTitle("JSON");
         initComponents();
     }
 
@@ -40,7 +39,7 @@ public class SendFijo extends javax.swing.JFrame {
         btnClear = new javax.swing.JButton();
         btnSend = new javax.swing.JButton();
         txtName = new javax.swing.JTextField();
-        txtYears = new javax.swing.JTextField();
+        txtAge = new javax.swing.JTextField();
         lblName = new javax.swing.JLabel();
         lblYears = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -71,9 +70,9 @@ public class SendFijo extends javax.swing.JFrame {
             }
         });
 
-        txtYears.addActionListener(new java.awt.event.ActionListener() {
+        txtAge.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtYearsActionPerformed(evt);
+                txtAgeActionPerformed(evt);
             }
         });
 
@@ -85,7 +84,7 @@ public class SendFijo extends javax.swing.JFrame {
         txtaRespuesta.setRows(5);
         jScrollPane1.setViewportView(txtaRespuesta);
 
-        cbxOpciones.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Delimitador", "JSON" }));
+        cbxOpciones.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Delimitador", "Fijo" }));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -101,7 +100,7 @@ public class SendFijo extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 131, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(txtName, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtYears, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(txtAge, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jScrollPane1)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(47, 47, 47)
@@ -123,7 +122,7 @@ public class SendFijo extends javax.swing.JFrame {
                     .addComponent(lblName))
                 .addGap(34, 34, 34)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtYears, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtAge, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblYears))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
                 .addComponent(cbxOpciones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -147,9 +146,9 @@ public class SendFijo extends javax.swing.JFrame {
         this.limpiar();
     }//GEN-LAST:event_btnClearActionPerformed
 
-    private void txtYearsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtYearsActionPerformed
+    private void txtAgeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtAgeActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtYearsActionPerformed
+    }//GEN-LAST:event_txtAgeActionPerformed
 
     private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
         this.socketCliente.sleep();
@@ -166,26 +165,36 @@ public class SendFijo extends javax.swing.JFrame {
 
     public void enviarMensaje() {
         try {
-            String values = "name" + "-" + this.txtName.getText() + "-" + "age" + "-" + this.txtYears.getText() + "-" + opcion();
-            //socketCliente.sendString(values);
-            values = values.length() + "-" + values;
-            socketCliente.sendValues(values);
+            socketCliente.sendValues(crearJson().toString());
         } catch (IOException ex) {
-            Logger.getLogger(SendFijo.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SendJSON.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public JSONObject crearJson(){
+        try {
+            JSONObject json= new JSONObject();
+            json.put("receptor", String.valueOf(this.opcion()));
+            json.put("age", this.txtAge.getText());
+            json.put("name", this.txtName.getText());
+            return json;
+        } catch (JSONException ex) {
+            Logger.getLogger(SendJSON.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
     
     public char opcion(){
         if(cbxOpciones.getSelectedIndex()==0){
             return 'D';
         }else{
-            return 'J';
+            return 'F';
         }
     }
 
     public void limpiar() {
         this.txtName.setText("");
-        this.txtYears.setText("");
+        this.txtAge.setText("");
         this.txtaRespuesta.setText("");
     }
 
@@ -206,14 +215,38 @@ public class SendFijo extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(SendFijo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SendJSON.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(SendFijo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SendJSON.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(SendFijo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SendJSON.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(SendFijo.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(SendJSON.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
@@ -226,7 +259,7 @@ public class SendFijo extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new SendFijo().setVisible(true);
+                new SendJSON().setVisible(true);
             }
         });
     }
@@ -238,8 +271,8 @@ public class SendFijo extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblName;
     private javax.swing.JLabel lblYears;
+    private javax.swing.JTextField txtAge;
     private javax.swing.JTextField txtName;
-    private javax.swing.JTextField txtYears;
     private javax.swing.JTextArea txtaRespuesta;
     // End of variables declaration//GEN-END:variables
 }

@@ -66,7 +66,7 @@ public class SocketFijo extends Thread {
                     System.out.println(str);
                     this.mensaje=new String(str);
                 }
-                 this.notificarUsuario(mensaje);
+                 this.notificarUsuario(mensaje.substring(new String(fin+"").length()+1, mensaje.length()));
                  this.messageBuffer.reset();
                 
             }
@@ -121,6 +121,15 @@ public class SocketFijo extends Thread {
         this.lfijoFramer.frameMsg(values.getBytes(), out);
     }
 
+    public void sleep(){
+        try {
+            this.socket.close();
+            System.out.println("A mimir");
+        } catch (IOException ex) {
+            Logger.getLogger(SocketFijo.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
     @Override
     public void run() {
         try {

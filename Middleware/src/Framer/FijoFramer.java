@@ -25,16 +25,8 @@ public class FijoFramer implements Framer {
      * @throws IOException 
      */
     public void frameMsg(byte[] message, OutputStream out) throws IOException {
-//        for (byte b:message) {
-//            if (b == DELIMITER) {
-//                throw new IOException("message ontains delimiter");
-//            }
-//        }
-        System.out.println("Aqui framer fijo enviando");
         out.write(message);
-        //out.write(DELIMITER);
         out.flush();
-        out.close();
     }
         
     @Override

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package receptor;
+package json;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -18,22 +18,16 @@ import java.util.logging.Logger;
  *
  * @author Alfon
  */
-public class LFijoFramer implements Framer {
+public class JSONFramer implements Framer {
 
     private InputStream in;
     private static final int LONGITUD = 0;
 
-    public LFijoFramer(InputStream in) {
+    public JSONFramer(InputStream in) {
         this.in = in;
     }
 
     public void frameMsg(byte[] message, OutputStream out) throws IOException {
-        /*for (byte b:message) {
-            if (b==LONGITUD) {
-                throw new IOException("message contains Lenght");
-            }
-        }*/
-        //out.write(LONGITUD);
         out.write(message);
         out.flush();
     }

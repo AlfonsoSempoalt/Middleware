@@ -33,7 +33,6 @@ public class DelimFramer implements Framer {
         out.write(message);
         out.write(DELIMITER);
         out.flush();
-        out.close();
     }
         
     @Override
